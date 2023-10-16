@@ -40,8 +40,13 @@ public class TaskController {
                     .body("Data de início dever ser menor que a data de término!");
         }
 
-        var task = this.taskRepository.save(taskModel);
-        return ResponseEntity.status(HttpStatus.OK).body(task);
+        try {
+            
+            var task = this.taskRepository.save(taskModel);
+            return ResponseEntity.status(HttpStatus.OK).body(task);
+        }catch(){
+            
+        }
     }
 
     @GetMapping("/")
@@ -56,29 +61,31 @@ public class TaskController {
         var task = this.taskRepository.findById(id).orElse(null);
         var idUser = request.getAttribute("idUser");
 
-        if (task != null) {
-
-            if(!task.getIdUser().equals(idUser))
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuário não tem permissão para alterar essa tarefa");
-
-            
-            var currentDate = LocalDateTime.now();
-            if (currentDate.isAfter(taskModel.getStartAt()) || currentDate.isAfter(taskModel.getEndAt())) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verifique as Datas de início e término!");
-            }
-
-            if (taskModel.getStartAt().isAfter(taskModel.getEndAt())) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("Data de início dever ser menor que a data de término!");
-            }
-
-            taskModel.setId(id);
-            Utils.copyNonNullProperties(taskModel, task);
-            var taskSave = this.taskRepository.save(task);
-            return ResponseEntity.status(HttpStatus.OK).body(taskSave);
-
-        } else {
+        if (task != null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tarefa não contrada!");
-        }
+
+        if (!task.getIdUser().equals(idUser))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Usuário não tem permissão para alterar essa tarefa");
+
+        /*
+         * var currentDate = LocalDateTime.now();
+         * if (currentDate.isAfter(taskModel.getStartAt()) ||
+         * currentDate.isAfter(taskModel.getEndAt())) {
+         * return ResponseEntity.status(HttpStatus.BAD_REQUEST).
+         * body("Verifique as Datas de início e término!");
+         * }
+         * 
+         * if (taskModel.getStartAt().isAfter(taskModel.getEndAt())) {
+         * return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+         * .body("Data de início dever ser menor que a data de término!");
+         * }
+         */
+
+        taskModel.setId(id);
+        Utils.copyNonNullProperties(taskModel, task);
+        var taskSave = this.taskRepository.save(task);
+        return ResponseEntity.status(HttpStatus.OK).body(taskSave);
+
     }
 }
