@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ao.tdados</groupId>
 	<artifactId>tudolist</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>tudolist</name>
 	<description>Gerenciador de tarefas</description>
 	<properties>
