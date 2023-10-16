@@ -1,11 +1,11 @@
-FROM ubuntu:latest as build
+FROM maven:4.0.0-jdk-17-slim AS build
 WORKDIR /home/build
-RUN apt-get update
-RUN apt-get install openjdk-17-jdk -y
+#RUN apt-get update
+#RUN apt-get install openjdk-17-jdk -y
 COPY . .
 
-RUN apt-get install maven -y
-RUN mvn clean install
+#RUN apt-get install maven -y
+RUN mvn -f /home/build/pom.xml clean package
 
 
 FROM openjdk:17-jdk-slim
